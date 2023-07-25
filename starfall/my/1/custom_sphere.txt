@@ -1,0 +1,34 @@
+--@name Customize Sphere
+--@author MongRaff
+--@shared
+if SERVER then
+    local radius = 500
+    local coloring = false
+    local rotating = false
+    local rotate_speed = 50
+    local inholo_mat = "models/wireframe"
+    local outholo_mat = "models/props_lab/cornerunit_cloud"
+    
+    -- CODE --
+    
+    -- Creating holos
+    local outholo = holograms.create(chip():getPos(),Angle(),"models/holograms/hq_icosphere.mdl",Vector(radius/6))
+    local inholo = holograms.create(chip():getPos(),Angle(),"models/holograms/hq_icosphere.mdl",Vector(-radius/6))
+    -- Parenting
+    outholo:setParent(chip())
+    inholo:setParent(chip())
+    -- Apply material
+    outholo:setMaterial(outholo_mat)
+    inholo:setMaterial(inholo_mat)
+    -- Rotate
+    if rotating then
+        outholo:setAngVel(Angle(0,math.rand(-1,1),0)*10)
+        inholo:setAngVel(Angle(math.rand(-1,1),math.rand(-1,1),math.rand(-1,1))*rotate_speed)
+    end
+    -- Color
+    if coloring then
+        timer.create("colorholo",0.1,0,function()
+            inholo:setColor(Color(timer.curtime()%6*60,1,1):hsvToRGB())
+        end)
+    end
+end
