@@ -1,0 +1,21 @@
+--@name SpeedHack
+--@author MongRaff
+--@shared
+if SERVER then
+    local speed = 400
+    function g(st)
+        return st and speed or 0
+    end
+    function g2(st)
+        return st and -speed or 0
+    end
+    hook.add("think","",function()
+        local o = owner()
+        local w,a,s,d = o:keyDown(IN_KEY.FORWARD),o:keyDown(IN_KEY.MOVELEFT),o:keyDown(IN_KEY.BACK),o:keyDown(IN_KEY.MOVERIGHT)
+        w,a,s,d = g(w),g2(a),g2(s),g(d)
+        local right,forw = a+d,w+s
+        if o:isOnGround() then
+            o:setVelocity(o:getRight()*right+o:getForward()*forw)
+        end
+    end)
+end
