@@ -1,0 +1,30 @@
+--@name RadianTest
+--@author MongRaff
+--@shared
+if SERVER then
+    local holos = {}
+    for i = 1,#find.allPlayers() do
+        local holo = holograms.create(chip():getPos(),Angle(),"models/holograms/hq_icosphere.mdl")
+        --holo:setNocollideAll(true)
+        --holo:setColor(Color(0,0,0,0))
+        holo:setTrails(35,35,1,"trails/laser",Color(255,255,255))
+        holos[i] = holo
+    end
+    local dist = 0
+    --local holo2 = holograms.create(chip():getPos(),Angle(),"models/holograms/hq_torus.mdl",Vector(18,18,0))
+    hook.add("tick","",function()
+        for i = 1,#find.allPlayers() do
+            local ply = find.allPlayers()[i]
+            local rad = math.sin(math.rad((ply:getPos()-chip():getPos()):getAngle().y))
+            local rad2 = math.cos(math.rad((ply:getPos()-chip():getPos()):getAngle().y))
+            local rad3 = math.sin(math.rad((ply:getShootPos()-chip():getPos()):getAngle().p))
+            local vdist = Vector(ply:getPos().x,ply:getPos().y,chip():getPos().z):getDistance(chip():getPos())
+            if vdist > 100 then
+                dist = 100
+            else
+                dist = vdist
+            end
+            holos[i]:setPos(chip():getPos()+Vector(rad2*dist,rad*dist,-rad3*dist))
+        end
+    end)
+end
