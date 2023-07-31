@@ -1,0 +1,14 @@
+--@name LerpTestFunc
+--@author MongRaff
+--@shared
+if SERVER then
+    function lerp(t,a,b)
+        return (1-t)*a+t*b
+    end
+    local a = 0
+    local stpos = chip():getPos()
+    timer.create("",0,0,function()
+        a = lerp(0.05,a,math.rad(owner():getEyeAngles().y))
+        chip():setPos(Vector(0,0,-a*100))
+    end)
+end
