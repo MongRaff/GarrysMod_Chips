@@ -1,0 +1,33 @@
+--@name FFT
+--@author MongRaff
+--@shared
+if SERVER then
+else
+    bass.loadURL("https://cdn.discordapp.com/attachments/1103045175493799956/1126210724956479619/Griffinilla_-_Hard_Drive_musmore.com.mp3","3d noblock",function(so)
+        s = so
+        s:setVolume(1)
+        s:setTime(0)
+        s:setLooping(true)
+        s:play()
+    end)
+    local holos = {}
+    local sm = {}
+    for i = 1,10 do
+        local holo = holograms.create(chip():getPos(),Angle(),"models/holograms/hq_cylinder.mdl")
+        holos[i] = holo
+        sm[i] = 0
+    end
+    hook.add("think","",function()
+        if isValid(s) then
+            local t = timer.curtime()
+            local fft = s:getFFT(256)
+            for i = 1,10 do
+                sm[i] = math.lerp(0.05,sm[i],fft[i]*20)
+                holos[i]:setPos(chip():getPos()+Vector(i*12,0,sm[i]*6))
+                holos[i]:setScale(Vector(1,1,sm[i]))
+                holos[i]:setColor(Color(sm[i]*10,1,1):hsvToRGB())
+            end
+            s:setPos(chip():getPos())
+        end
+    end)
+end
