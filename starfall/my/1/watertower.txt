@@ -1,0 +1,57 @@
+--@name WaterTower
+--@author MongRaff
+--@shared
+if SERVER then
+    chip():setColor(Color(0,0,0,0))
+    local pro = prop.create(chip():localToWorld(Vector(0,0,25)),chip():getAngles(),"models/props_c17/GasPipes006a.mdl",true)
+    local val = prop.create(chip():localToWorld(Vector(4.5,0,40)),chip():localToWorldAngles(Angle(0,0,-90)),"models/props_pipes/valvewheel002.mdl",true)
+    val:setParent(pro)
+    local waters = {}
+    local active = false
+    timer.create("spawn",0.25,0,function()
+        if active then
+            local wat = prop.create(pro:localToWorld(Vector(-8+math.rand(-1,1),math.rand(-1,1),25)),pro:getAngles(),"models/sprops/geometry/sphere_3.mdl")
+            wat:setMaterial("models/props_combine/com_shield001a")
+            wat:setPhysMaterial("gmod_ice")
+            table.insert(waters,1,wat)
+            --[[for k,v in pairs(waters) do
+                if v:getClass() == "prop_physics" then
+                    constraint.nocollide(wat,v)
+                end
+            end]]
+        end
+    end)
+    function roll(bol)
+        timer.create("roll",0,0,function()
+            if bol then
+                i = i + 1
+                if i < 90 then
+                    val:setAngles(val:localToWorldAngles(Angle(0,i/10,0)))
+                else
+                    timer.remove("roll")
+                end
+            else
+                i = i - 1
+                if i > 0 then
+                    val:setAngles(val:localToWorldAngles(Angle(0,-i/10,0)))
+                else
+                    timer.remove("roll")
+                end
+            end
+        end)
+    end
+    hook.add("KeyPress","",function(ply)
+        if not ply:keyDown(IN_KEY.USE) then return end
+        if ply:getEyeTrace().Entity == val then
+            if not timer.exists("roll") then
+            active = not active
+                if active then
+                    i = 0
+                else
+                    i = 90
+                end
+                roll(active)
+            end
+        end
+    end)
+end
